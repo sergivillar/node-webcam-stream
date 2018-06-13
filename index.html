@@ -9,18 +9,28 @@
 </head>
 
 <body>
-    <canvas id="videoCanvas" width="640" height="480">
-    </canvas>
+    <video id="videoCanvas" autoplay> </video>
 </body>
 <script>
     const socket = new WebSocket('ws://localhost:5000');
+    const video = document.getElementById('videoCanvas');
+    let mediaSource, sourceBuffer;
+    mediaSource = new MediaSource();
+
+    mediaSource.addEventListener('sourceopen', function (e) {
+        sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vorbis,vp9"');
+        // sourceBuffer = mediaSource.addSourceBuffer('video/flv; codecs="vp6,aac"');
+    });
+
 
     socket.onopen = function (event) {
+        video.src = window.URL.createObjectURL(mediaSource);
         console.log("Connection established");
     }
 
-    socket.onmessage = function (event) {
-        console.log(event)
+    socket.onmessage = function (e) {
+        console.log(e.data)
+        sourceBuffer.appendBuffer(new Uint8Array(e.data));
     };
 
 </script>

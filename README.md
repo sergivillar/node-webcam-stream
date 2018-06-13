@@ -1,0 +1,1 @@
+brew reinstall ffmpeg --with-libvpx
