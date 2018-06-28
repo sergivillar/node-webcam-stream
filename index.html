@@ -9,10 +9,11 @@
 </head>
 
 <body>
-    <video id="videoCanvas" controls width="320" height="240"> </video>
+    <video id="videoCanvas" controls width="640" height="480"> </video>
 </body>
 <script>
     const socket = new WebSocket('ws://localhost:5000');
+    socket.binaryType = "arraybuffer";
 
     const video = document.getElementById('videoCanvas');
     let mediaSource, sourceBuffer;
@@ -20,7 +21,8 @@
     mediaSource = new MediaSource();
 
     mediaSource.addEventListener('sourceopen', function (e) {
-        sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9"');
+        sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
+        // sourceBuffer.mode = 'segments';
 
         sourceBuffer.addEventListener('error', e => { console.log('Error', e); });
         sourceBuffer.addEventListener('sourceended', e => { console.log('sourceended: ' + mediaSource.readyState); });
@@ -29,10 +31,18 @@
 
         sourceBuffer.addEventListener('update', function () { // Note: Have tried 'updateend'
             if (queue.length > 0 && !sourceBuffer.updating) {
-                console.log(queue[0].length);
+                console.log('update', queue[0]);
                 sourceBuffer.appendBuffer(queue.shift());
             }
         });
+
+        // sourceBuffer.addEventListener('updateend', function () {
+        //     if (queue.length > 0 && !sourceBuffer.updating) {
+        //         console.log('updateend', queue[0]);
+        //         sourceBuffer.appendBuffer(queue.shift());
+        //     }
+        // });
+
 
         // sourceBuffer.addEventListener('updateend', () => {
         //     mediaSource.endOfStream();
@@ -47,17 +57,15 @@
     }
 
     socket.onmessage = function (e) {
+        console.log(e.data)
         if (typeof e.data !== 'string') {
-
             if (sourceBuffer.updating || queue.length > 0) {
-                console.log('add to queue')
-                var file = new Uint8Array(e.data);
-                console.log(file.length, file.buffer)
-                console.log(file)
-                queue.push(file);
+                console.log('Add to queue')
+                queue.push(e.data);
             } else {
-                console.log('ADD')
-                sourceBuffer.appendBuffer(new Uint8Array(e.data));
+                console.log('Add to buffer', e.data)
+                sourceBuffer.appendBuffer(e.data)
+                video.play()
             }
         }
     };
