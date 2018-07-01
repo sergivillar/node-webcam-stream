@@ -7,12 +7,13 @@ app.get("/", function(req, res) {
 });
 
 app.post("/", (req, res) => {
-  req.on("data", function(chunk) {
+  req.on("data", chunk => {
     ws.clients.forEach(c => c.send(chunk));
   });
-  req.on("end", function() {
-    console.log("----- END -----");
+
+  req.on("end", () => {
+    console.log("----- END STREAM -----");
   });
 });
 
-app.listen(3000, () => console.log("Example app listening on port 3000!"));
+app.listen(3000, () => console.log("Listening on port 3000"));

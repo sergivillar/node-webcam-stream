@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <video id="videoCanvas" controls width="640" height="480"> </video>
+    <video id="videoCanvas" controls width="1280" height="720" autoplay> </video>
 </body>
 <script>
     const socket = new WebSocket('ws://localhost:5000');
@@ -22,32 +22,18 @@
 
     mediaSource.addEventListener('sourceopen', function (e) {
         sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
-        // sourceBuffer.mode = 'segments';
 
         sourceBuffer.addEventListener('error', e => { console.log('Error', e); });
         sourceBuffer.addEventListener('sourceended', e => { console.log('sourceended: ' + mediaSource.readyState); });
         sourceBuffer.addEventListener('sourceclose', e => { console.log('sourceclose: ' + mediaSource.readyState); });
 
 
-        sourceBuffer.addEventListener('update', function () { // Note: Have tried 'updateend'
+        sourceBuffer.addEventListener('update', function () {
+            console.log('update')
             if (queue.length > 0 && !sourceBuffer.updating) {
-                console.log('update', queue[0]);
                 sourceBuffer.appendBuffer(queue.shift());
             }
         });
-
-        // sourceBuffer.addEventListener('updateend', function () {
-        //     if (queue.length > 0 && !sourceBuffer.updating) {
-        //         console.log('updateend', queue[0]);
-        //         sourceBuffer.appendBuffer(queue.shift());
-        //     }
-        // });
-
-
-        // sourceBuffer.addEventListener('updateend', () => {
-        //     mediaSource.endOfStream();
-        //     console.log('mediaSource updateend', mediaSource.readyState); // ended
-        // });
     });
 
 
@@ -60,12 +46,9 @@
         console.log(e.data)
         if (typeof e.data !== 'string') {
             if (sourceBuffer.updating || queue.length > 0) {
-                console.log('Add to queue')
                 queue.push(e.data);
             } else {
-                console.log('Add to buffer', e.data)
                 sourceBuffer.appendBuffer(e.data)
-                video.play()
             }
         }
     };
