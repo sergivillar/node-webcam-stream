@@ -1,6 +1,30 @@
 # Requiremetns
 
-brew reinstall ffmpeg --with-libvpx
+## MacOS
+
+`brew install ffmpeg --with-libvpx``
+
+## Linux (Raspbian)
+
+### Install livbpx (VP8/VP9)
+
+```
+git clone --depth 1 https://chromium.googlesource.com/webm/libvpx.git
+cd libvpx
+./configure
+make
+make install
+```
+
+### Install ffmpeg
+```
+wget https://ffmpeg.org/releases/ffmpeg-4.0.1.tar.bz2
+tar -xvf ffmpeg-4.0.1.tar.bz2
+cd ffmpeg-4.0.1.tar.bz2
+./configure  --enable-libvpx
+make
+```
+
 
 # Start streaming
 
