@@ -2,7 +2,7 @@
 
 ## MacOS
 
-`brew install ffmpeg --with-libvpx``
+`brew install ffmpeg --with-libvpx`
 
 ## Linux (Raspbian)
 
