@@ -1,12 +1,13 @@
 const express = require("express");
 const app = express();
+const path = require("path");
 const WebSocketServer = require("ws").Server;
 const { startFfmpeg, stopFfmpg } = require("./ffmpeg");
 
 const webSocket = new WebSocketServer({ port: 5000 });
 
-app.get("/", function(req, res) {
-  res.sendFile("../index.html", { root: __dirname });
+app.get("/", (req, res) => {
+  res.sendFile(path.resolve("index.html"));
 });
 
 app.post("/", (req, res) => {
