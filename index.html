@@ -14,11 +14,11 @@
 <script>
     const socket = new WebSocket('ws://localhost:5000');
     socket.binaryType = "arraybuffer";
-
     const video = document.getElementById('videoCanvas');
-    let mediaSource, sourceBuffer;
-    var queue = [];
-    mediaSource = new MediaSource();
+    let sourceBuffer;
+    let queue = [];
+    let mediaSource = new MediaSource();
+    video.src = window.URL.createObjectURL(mediaSource);
 
     mediaSource.addEventListener('sourceopen', function (e) {
         sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
@@ -27,23 +27,18 @@
         sourceBuffer.addEventListener('sourceended', e => { console.log('sourceended: ' + mediaSource.readyState); });
         sourceBuffer.addEventListener('sourceclose', e => { console.log('sourceclose: ' + mediaSource.readyState); });
 
-
         sourceBuffer.addEventListener('update', function () {
-            console.log('update')
             if (queue.length > 0 && !sourceBuffer.updating) {
                 sourceBuffer.appendBuffer(queue.shift());
             }
         });
     });
 
-
     socket.onopen = function (event) {
-        video.src = window.URL.createObjectURL(mediaSource);
         console.log("Connection established");
     }
 
     socket.onmessage = function (e) {
-        console.log(e.data)
         if (typeof e.data !== 'string') {
             if (sourceBuffer.updating || queue.length > 0) {
                 queue.push(e.data);
