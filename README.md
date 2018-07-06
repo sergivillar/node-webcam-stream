@@ -17,6 +17,7 @@ make install
 ```
 
 ### Install ffmpeg
+
 ```
 wget https://ffmpeg.org/releases/ffmpeg-4.0.1.tar.bz2
 tar -xvf ffmpeg-4.0.1.tar.bz2
@@ -25,7 +26,17 @@ cd ffmpeg-4.0.1.tar.bz2
 make
 ```
 
-
-# Start streaming
+# FFMPEG streaming MacOS
 
 `fmpeg -s 1280x720 -r 30 -f avfoundation -i "0" -f webm -codec:v libvpx -deadline realtime -b:v 600k -maxrate 600k -bufsize 1200k -qmin 10 -qmax 42 -threads 4 http://localhost:3000`
+
+# FFMPEG streaming Linux
+
+`fmpeg -s 1280x720 -r 30 -f v4l2 -i "/dev/video0" -f webm -codec:v libvpx -deadline realtime -b:v 600k -maxrate 600k -bufsize 1200k -qmin 10 -qmax 42 -threads 4 http://localhost:3000`
+
+# Start node server
+
+```
+cd server
+node index.js
+```
