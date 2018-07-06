@@ -7,7 +7,8 @@ const { startFfmpeg, stopFfmpg } = require("./ffmpeg");
 const webSocket = new WebSocketServer({ port: 5000 });
 
 app.get("/", (req, res) => {
-  res.sendFile(path.resolve("index.html"));
+  console.log(__dirname);
+  res.sendFile(path.resolve(__dirname, "../index.html"));
 });
 
 app.post("/", (req, res) => {
